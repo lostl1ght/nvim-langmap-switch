@@ -28,8 +28,12 @@ local function setup(opts)
   vim.o.iminsert = config.iminsert
   vim.o.imsearch = config.imsearch
 
-  vim.keymap.set('i', config.map_insert, switch_insert)
-  vim.keymap.set('n', config.map_normal, switch_normal)
+  if config.map_insert then
+    vim.keymap.set('i', config.map_insert, switch_insert)
+  end
+  if config.map_normal then
+    vim.keymap.set('n', config.map_normal, switch_normal)
+  end
 end
 
 return { setup = setup }
