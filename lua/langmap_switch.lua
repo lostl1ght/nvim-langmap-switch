@@ -3,14 +3,15 @@ local default_config = {
   imsearch = -1,
   map_insert = '<c-\\>',
   map_normal = '<c-\\>',
+  map_command = '<c-\\>',
 }
 
-local function switch_normal()
+local function switch_n()
   vim.o.iminsert = math.floor((2 - vim.o.iminsert) / 2)
 end
 
 local key = vim.api.nvim_replace_termcodes('<c-^>', true, true, true)
-local function switch_insert()
+local function switch_ic()
   vim.api.nvim_feedkeys(key, 'n', false)
 end
 
@@ -29,11 +30,32 @@ local function setup(opts)
   vim.o.imsearch = config.imsearch
 
   if config.map_insert then
-    vim.keymap.set('i', config.map_insert, switch_insert)
+    vim.keymap.set('i', config.map_insert, switch_ic)
+  end
+  if config.map_command then
+    vim.keymap.set('c', config.map_command, switch_ic)
   end
   if config.map_normal then
-    vim.keymap.set('n', config.map_normal, switch_normal)
+    vim.keymap.set('n', config.map_normal, switch_n)
   end
 end
 
-return { setup = setup }
+---Statusline condition
+---@return boolean
+local function condition()
+  if not vim.b.keymap_name then
+    return false
+  end
+  if vim.fn.mode() == 'c' and vim.o.imsearch ~= -1 then
+    return vim.o.imsearch ~= 0
+  end
+  return vim.o.iminsert == 1
+end
+
+---Statusline provider
+---@return string
+local function provider()
+  return string.upper(vim.b.keymap_name) .. ' '
+end
+
+return { setup = setup, condition = condition, provider = provider }
