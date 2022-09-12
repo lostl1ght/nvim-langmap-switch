@@ -43,19 +43,14 @@ end
 ---Statusline condition
 ---@return boolean
 local function condition()
-  if not vim.b.keymap_name then
-    return false
-  end
-  if vim.fn.mode() == 'c' and vim.o.imsearch ~= -1 then
-    return vim.o.imsearch ~= 0
-  end
-  return vim.o.iminsert == 1
+  return vim.b.keymap_name
+    and (vim.o.imsearch ~= -1 and vim.fn.mode() == 'c' and vim.o.imsearch == 1 or vim.o.iminsert == 1)
 end
 
 ---Statusline provider
 ---@return string
 local function provider()
-  return string.upper(vim.b.keymap_name) .. ' '
+  return string.upper(vim.b.keymap_name)
 end
 
 return { setup = setup, condition = condition, provider = provider }
